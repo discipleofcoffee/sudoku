@@ -47,7 +47,7 @@ class SudokuParser(object):
 
         return boxRowLoc + boxColLoc
 
-    def sudokuElements(self):
+    def setCellAttributes(self):
 
 
         sudokuRows = self.sudokuString.split('\n')
@@ -55,8 +55,15 @@ class SudokuParser(object):
         for rows in range(0,9):
             for cols in range(0,9):
                 boxLoc = self.boxLoc(rows, cols)
-                val = sudokuRows[rows][cols]
-                self.sudokuElem.append({'row': rows, 'col': cols, 'box': boxLoc, 'val': val})
+                val = int(sudokuRows[rows][cols])
+                origVal = tuple(val)
+                if val:
+                    mutable = bool(1)
+                else:
+                    mutable = bool(0)
+                rowColBox = (rows, cols, boxLoc)
+
+                self.sudokuElem.append({'rowColBox': rowColBox, 'val': val, 'origVal': origVal, 'mutable': mutable})
         return self.sudokuElem
 
     def sudokuTabulate(self):
@@ -68,17 +75,16 @@ class SudokuParser(object):
             self.sudokuTable.append(list(rowStrings))
         return self.sudokuTable
 
-    def sudokuSubBoxer(self):
-        """ Creates sub-boxes from the sudokutable.
-        """
-        self.sudokuTable
+
 
 
 class sudokuSolver(object):
 
-    def __init__(self, sudokuParser):
+    def __init__(self, sudokuElements):
 
         elems = sudokuParser.sudokuElem
+
+
 
     def considerRow(self,rowNum):
         
@@ -100,7 +106,7 @@ if __name__ == '__main__':
 
     sudokuPuzzle = SudokuParser(sudokuString)
     table = sudokuPuzzle.sudokuTabulate()
-    elems = sudokuPuzzle.sudokuElements()
+    elems = sudokuPuzzle.setCellAttributes()
     sudokuPuzzle.sudokuSubBoxer()
 
 
