@@ -12,6 +12,7 @@ __author__ = 'Kshitij'
 000000740
 """
 
+import socket
 
 class SudokuParser(object):
     """ Accepts a string and parses into a sudoku puzzle table and the sub-boxes.
@@ -22,7 +23,7 @@ class SudokuParser(object):
     def __init__(self, sudokuString):
         self.sudokuString = sudokuString
         self.sudokuTable = []
-        self.sudokuElem = {}
+        self.puzzleAsListDict = {}
 
     def boxLoc(self, rowNum, colNum):
         """ Determines sub-box location based on row and column number.
@@ -47,24 +48,24 @@ class SudokuParser(object):
 
         return boxRowLoc + boxColLoc
 
-    def setCellAttributes(self):
+    def makePuzzleAsListDict(self):
 
 
         sudokuRows = self.sudokuString.split('\n')
-        self.sudokuElem = []
+        self.puzzleAsListDict = []
         for rows in range(0,9):
             for cols in range(0,9):
                 boxLoc = self.boxLoc(rows, cols)
-                val = int(sudokuRows[rows][cols])
-                origVal = tuple(val)
+                val = (sudokuRows[rows][cols])
+                origVal = (val,)
                 if val:
-                    mutable = bool(1)
+                    mutable = True
                 else:
-                    mutable = bool(0)
+                    mutable = False
                 rowColBox = (rows, cols, boxLoc)
 
-                self.sudokuElem.append({'rowColBox': rowColBox, 'val': val, 'origVal': origVal, 'mutable': mutable})
-        return self.sudokuElem
+                self.puzzleAsListDict.append({'rowColBox': rowColBox, 'val': val, 'origVal': origVal, 'mutable': mutable})
+        return self.puzzleAsListDict
 
     def sudokuTabulate(self):
         """ Converts the sudoku puzzle string into a list of lists to mimic a table structure.
@@ -75,10 +76,22 @@ class SudokuParser(object):
             self.sudokuTable.append(list(rowStrings))
         return self.sudokuTable
 
+    def makePuzzleAsString(self, puzzleAsListDict):
+        """ Converts the puzzle in a grid-puzzle string form.
+        """
+
+        puzzleAsString = []
+        for element in puzzleAsListDict:
+            puzzleAsString.append(element['val'])
+            if element['rowColBox'][1] == 8 and element['rowColBox'][0] != 8:
+                puzzleAsString.append('\n')
+
+        return ''.join(puzzleAsString)
 
 
 
-class sudokuSolver(object):
+
+class SudokuSolver(object):
 
     def __init__(self, sudokuElements):
 
@@ -87,7 +100,28 @@ class sudokuSolver(object):
 
 
     def considerRow(self,rowNum):
-        
+        pass
+
+def setPath():
+    """ Sets the path for the puzzle file depending on the system the program is run on.
+    :return: str
+    """
+    if socket.gethostname() == 'HomeDesktop':
+        puzzlePath = 'C://Users/KC/OneDrive/ProgrammingProjects/Python/Sudoku/'
+    else:
+        puzzlePath = 'C://Users/Kshitij/OneDrive/ProgrammingProjects/Python/Sudoku/'
+    return puzzlePath
+
+def getPuzzle(puzzlePath, puzzleFileName = 'SudokuInitPuzzleF2.csv'):
+    """ Converts puzzle file into a string to be parsed
+    :param puzzlePath: (type: str) puzzle file name's path
+    :param puzzleFileName: (type: str) puzzle file's name. Default: 'SudokuInitPuzzleF2.csv'
+    :return: str
+    """
+    sudokuPuzzleFile = puzzlePath
+    sudokuPuzzleFile = open(puzzlePath+puzzleFileName, encoding='utf-8')
+    sudokuString = sudokuPuzzleFile.read()
+    return sudokuString
 
 
 
@@ -101,13 +135,15 @@ if __name__ == '__main__':
 
     """
 
-    sudokuPuzzleFile = open('C:\\Users\Kshitij\OneDrive\ProgrammingProjects\Python\Sudoku\SudokuInitPuzzleF2.csv', encoding='utf-8')
-    sudokuString = sudokuPuzzleFile.read()
+    puzzlePath = setPath()
+    sudokuString = getPuzzle(puzzlePath, puzzleFileName = 'SudokuInitPuzzleF2.csv')
 
     sudokuPuzzle = SudokuParser(sudokuString)
     table = sudokuPuzzle.sudokuTabulate()
-    elems = sudokuPuzzle.setCellAttributes()
-    sudokuPuzzle.sudokuSubBoxer()
+    elems = sudokuPuzzle.makePuzzleAsListDict()
+    puzzleString = sudokuPuzzle.makePuzzleAsString(elems)
+    print(sudokuString == puzzleString)
+    pass
 
 
 
