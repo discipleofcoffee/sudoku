@@ -10,6 +10,8 @@ __author__ = 'Kshitij'
 104000036
 073642100
 000000740
+
+!!!! I can create a sudoku variable (class) which can do all this.
 """
 
 import socket
@@ -25,14 +27,15 @@ def cellPlaceLocator():
 
 locTranslat = cellPlaceLocator()
 
-class SudokuParser(object):
-    """ Accepts a string and parses into a sudoku puzzle table and the sub-boxes.
+class SudokuPuzzle(object):
+    """ Sudoku Puzzle custom data type. Accepts a string and parses into a sudoku puzzle list of dict for solcing and
+        view it as puzzle grid.
 
     :param sudokuString: Accepts a string representative of the sudoku puzzle.
     """
 
-    def __init__(self, sudokuString):
-        self.sudokuString = sudokuString
+    def __init__(self, puzzleInputString):
+        self.puzzleInputString = puzzleInputString
         self.sudokuTable = []
         self.puzzleAsListDict = {}
 
@@ -62,7 +65,7 @@ class SudokuParser(object):
     def makePuzzleAsListDict(self):
 
 
-        sudokuRows = self.sudokuString.split('\n')
+        sudokuRows = self.puzzleInputString.split('\n')
         self.puzzleAsListDict = []
         for rows in range(0,9):
             for cols in range(0,9):
@@ -82,7 +85,7 @@ class SudokuParser(object):
         """ Converts the sudoku puzzle string into a list of lists to mimic a table structure.
         """
 
-        sudokuRows = self.sudokuString.split('\n')
+        sudokuRows = self.puzzleInputString.split('\n')
         for rowStrings in sudokuRows:
             self.sudokuTable.append(list(rowStrings))
         return self.sudokuTable
@@ -143,7 +146,7 @@ def setValue(puzzleAsListDict, newVal, elemRow, elemCol):
     :return: list of dict
     """
 
-    currentIdx = locTranslat{(elemRow, elemCol)}
+    currentIdx = locTranslat[(elemRow, elemCol)]
     if puzzleAsListDict[currentIdx]['mutable']:
         puzzleAsListDict[currentIdx]['val'] = newVal
     else:
@@ -171,7 +174,7 @@ if __name__ == '__main__':
     puzzlePath = setPath()
     sudokuString = getPuzzle(puzzlePath, puzzleFileName = 'SudokuInitPuzzleF2.csv')
 
-    sudokuPuzzle = SudokuParser(sudokuString)
+    sudokuPuzzle = SudokuPuzzle(sudokuString)
     table = sudokuPuzzle.sudokuTabulate()
     elems = sudokuPuzzle.makePuzzleAsListDict()
     puzzleString = sudokuPuzzle.makePuzzleAsString(elems)
